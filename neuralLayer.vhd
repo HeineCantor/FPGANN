@@ -10,7 +10,9 @@ entity neuralLayer is
     port(
         clock, reset: in std_logic;
         startInference: in std_logic;
+        inputData: in std_logic_vector(31 downto 0);
         
+        outputData: out std_logic_vector(31 downto 0);
         readInput, nextInput, writeOutput, nextOutput: out std_logic;
         inferenceCompleted: out std_logic
     );
@@ -123,10 +125,10 @@ begin
         writeAcc => writeOutput,
         
         nextWeight => memNextAddress,
-        nextInput => open,
+        nextInput => nextInput,
         nextOutput => nextOutput,
         readWeight => memRead,
-        readInput => open,
+        readInput => readInput,
         countInInput => countInInput,
         countInNeuron => countInNeuron,
         inferenceCompleted => inferenceCompleted
@@ -170,7 +172,7 @@ begin
         write => memWrite,
         nextAddress => memNextAddress,
         
-        dataInput => (others => '0'),
+        dataInput => (others => '0'), -- non serve scrivere nella memoria dei pesi
         
         dataOutput => readWeight
     );
@@ -200,12 +202,14 @@ begin
         outData => activationOutput
     );
 
-    bias <= "000000000000000000000000" & readWeight;
+    bias <= "000000000000000000000000" & readWeight; -- quando viene effettuato il set del bias, il peso letto è proprio quello del bias
 
     maxCountInput <= std_logic_vector(to_unsigned(inputSize, 10));
     maxCountNeuron <= std_logic_vector(to_unsigned(outputSize-1, 10));
 
     operand1 <= "000000000000000000000000" & readWeight;
-    operand2 <= "00000000000000000000000000000001";
+    operand2 <= inputData;
+    
+    outputData <= activationOutput;
 
 end structural;

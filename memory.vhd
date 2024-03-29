@@ -21,7 +21,7 @@ end memory;
 architecture memArch of memory is
 
     type ramType is array (0 to 2**addressLength-1) of std_logic_vector(dataLength-1 downto 0);
-    signal ram: ramType := (others=>"00000001");
+    signal ram: ramType := (others=>(others=>'0'));
 
 begin
 
